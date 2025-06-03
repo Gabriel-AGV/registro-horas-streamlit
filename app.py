@@ -44,25 +44,11 @@ def registro():
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-    # --- Obtener proyectos desde Firebase (formato lista con null al inicio) ---
-    try:
-        proyectos_raw = db.child("proyectos").get().val()
-        if isinstance(proyectos_raw, list):
-            # Elimina elementos None (null) de la lista
-            proyectos = [p for p in proyectos_raw if p]
-        else:
-            proyectos = []
-    except Exception as e:
-        st.error("Error al cargar los proyectos desde Firebase.")
-        proyectos = []
-
-    if not proyectos:
-        st.warning("No hay proyectos disponibles. Contacta al administrador.")
-        return
 
     # --- Formulario de registro de horas ---
+    proyectos = ["Proyecto A", "Proyecto B", "etc"]
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
-    categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "Ing QP"])
+    categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "etc"])
     horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
     fecha = st.date_input("Fecha", value=date.today())
 
@@ -80,20 +66,6 @@ def registro():
         except:
             st.error("Error al guardar el registro en Firebase.")
 
-    # --- Sección exclusiva para administrador ---
-    if correo == "admin@empresa.cl":
-        st.markdown("### 🔧 Agregar nuevo proyecto")
-        nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
-
-        if st.button("Agregar proyecto"):
-            if nuevo_proyecto:
-                try:
-                    proyectos_raw.append(nuevo_proyecto)
-                    db.child("proyectos").set(proyectos_raw)
-                    st.success(f"Proyecto '{nuevo_proyecto}' agregado correctamente.")
-                    st.rerun()
-                except:
-                    st.error("Error al agregar el proyecto.")
 
     # --- Formulario de registro ---
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
@@ -116,19 +88,6 @@ def registro():
         except Exception as e:
             st.error("Error al registrar los datos.")
 
-    # --- Área del administrador ---
-    if correo == "admin@empresa.cl":
-        st.write("---")
-        st.markdown("### 🔧 Agregar nuevo proyecto")
-        nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
-        if st.button("Agregar proyecto"):
-            if nuevo_proyecto:
-                try:
-                    db.child("proyectos").push(nuevo_proyecto)
-                    st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
-                    st.rerun()
-                except Exception as e:
-                    st.error("Error al agregar proyecto.")
 
 # --- Control de navegación ---
 if st.session_state.user is None:
