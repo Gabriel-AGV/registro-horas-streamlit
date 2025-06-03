@@ -3,7 +3,7 @@ from datetime import date
 import pyrebase
 import json
 
-# Cargar configuración de Firebase
+# --- Cargar configuración de Firebase ---
 with open("firebase_config.json") as f:
     firebase_config = json.load(f)
 
@@ -11,51 +11,47 @@ firebase = pyrebase.initialize_app(firebase_config)
 auth = firebase.auth()
 db = firebase.database()
 
+# --- Configuración inicial ---
 st.set_page_config(page_title="Registro de Horas", layout="centered")
 
-# Inicializar estado si no existe
+# --- Estado de sesión ---
 if "user" not in st.session_state:
     st.session_state.user = None
+if "login_successful" not in st.session_state:
+    st.session_state.login_successful = False
 
-# Función login
+# --- Función de login ---
 def login():
     st.title("Iniciar Sesión")
+
     email = st.text_input("Correo")
     password = st.text_input("Contraseña", type="password")
 
     if st.button("Iniciar sesión"):
         try:
             user = auth.sign_in_with_email_and_password(email, password)
-            # Validar campos esperados
-            if "email" in user:
-                st.session_state.user = user
-                st.success("Sesión iniciada correctamente.")
-                st.experimental_rerun()
-                return
-            else:
-                raise ValueError("Respuesta inesperada al iniciar sesión.")
+            st.session_state.user = user
+            st.session_state.login_successful = True
+            st.success("Sesión iniciada correctamente.")
+            st.experimental_rerun()
         except Exception as e:
             st.error("Error en el correo o contraseña.")
+            # st.warning(str(e))  # opcional para depuración
 
-# Función principal
+    if st.session_state.login_successful:
+        st.stop()  # Evita doble ejecución tras login
+
+# --- Página principal ---
 def registro():
-    if not st.session_state.user or "email" not in st.session_state.user:
-        st.warning("Por favor inicia sesión.")
-        st.session_state.user = None
-        st.experimental_rerun()
-        return
-
     st.title("Registro de Horas")
+
     correo = st.session_state.user["email"]
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-    try:
-        proyectos_raw = db.child("proyectos").get().val()
-        proyectos = list(proyectos_raw.values()) if proyectos_raw else []
-    except:
-        st.error("Error al cargar los proyectos.")
-        proyectos = []
+    # --- Obtener proyectos desde Firebase ---
+    proyectos_raw = db.child("proyectos").get().val()
+    proyectos = list(proyectos_raw.values()) if proyectos_raw else []
 
     if not proyectos:
         st.warning("No hay proyectos disponibles. Contacta al administrador.")
@@ -74,31 +70,21 @@ def registro():
             "horas": horas,
             "fecha": fecha.strftime('%Y-%m-%d')
         }
-        try:
-            db.child("registros").push(data)
-            st.success("Registro guardado correctamente.")
-        except:
-            st.error("No se pudo guardar el registro. Revisa conexión o permisos.")
+        db.child("registros").push(data)
+        st.success("Registro guardado correctamente.")
 
+    # --- Zona del administrador ---
     if correo == "admin@empresa.cl":
+        st.write("---")
         st.markdown("### 🔧 Agregar nuevo proyecto")
         nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
         if st.button("Agregar proyecto"):
             if nuevo_proyecto:
-                try:
-                    db.child("proyectos").push(nuevo_proyecto)
-                    st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
-                    st.experimental_rerun()
-                except:
-                    st.error("Error al agregar el proyecto.")
+                db.child("proyectos").push(nuevo_proyecto)
+                st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
+                st.experimental_rerun()
 
-    st.markdown("---")
-    if st.button("Cerrar sesión"):
-        st.session_state.user = None
-        st.success("Sesión cerrada.")
-        st.experimental_rerun()
-
-# Lógica principal
+# --- Control de navegación ---
 if st.session_state.user is None:
     login()
 else:
