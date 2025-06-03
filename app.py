@@ -33,13 +33,9 @@ def login():
             st.session_state.user = user
             st.session_state.login_successful = True
             st.success("Sesión iniciada correctamente.")
-            st.experimental_rerun()
+            st.rerun()
         except Exception as e:
             st.error("Error en el correo o contraseña.")
-            st.warning(str(e))  # Opcional para ver el mensaje real de Firebase
-
-    if st.session_state.login_successful:
-        st.stop()  # Detiene ejecución tras login exitoso
 
 # --- Página principal ---
 def registro():
@@ -55,7 +51,6 @@ def registro():
         proyectos = list(proyectos_raw.values()) if proyectos_raw else []
     except Exception as e:
         st.error("Error al cargar los proyectos desde Firebase.")
-        st.warning(str(e))
         proyectos = []
 
     if not proyectos:
@@ -79,10 +74,9 @@ def registro():
             }
             db.child("registros").push(data)
             st.success("Registro guardado correctamente.")
-            st.experimental_rerun()
+            st.rerun()
         except Exception as e:
             st.error("Error al registrar los datos.")
-            st.warning(str(e))
 
     # --- Área del administrador ---
     if correo == "admin@empresa.cl":
@@ -94,15 +88,13 @@ def registro():
                 try:
                     db.child("proyectos").push(nuevo_proyecto)
                     st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
-                    st.experimental_rerun()
+                    st.rerun()
                 except Exception as e:
                     st.error("Error al agregar proyecto.")
-                    st.warning(str(e))
 
 # --- Control de navegación ---
 if st.session_state.user is None:
     login()
 else:
     registro()
-
 
