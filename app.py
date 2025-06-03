@@ -39,16 +39,29 @@ def formulario():
         st.warning("Por favor inicia sesión.")
         st.stop()
 
+    # Refrescar el token para evitar errores HTTP
+    try:
+        user = auth.refresh(st.session_state.user['refreshToken'])
+        st.session_state.user['idToken'] = user['idToken']
+    except Exception:
+        st.error("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.")
+        st.session_state.user = None
+        st.stop()
+
     st.title("Registro de Horas")
     correo = st.session_state.user["email"]
     st.write(f"Sesión activa como: **{correo}**")
 
     # Obtener lista de proyectos desde Firebase
-    proyectos_raw = db.child("proyectos").get().val()
-    proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    try:
+        proyectos_raw = db.child("proyectos").get(st.session_state.user['idToken']).val()
+        proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    except Exception:
+        st.error("Error al cargar proyectos. Verifica tu conexión o reglas de la base de datos.")
+        st.stop()
 
     if not proyectos:
-        st.warning("No hay proyectos disponibles. Contacta al administrador.")
+        st.warning("No hay proyectos disponibles.")
         return
 
     proyecto = st.selectbox("Proyecto", proyectos)
@@ -57,35 +70,36 @@ def formulario():
     fecha = st.date_input("Fecha", value=date.today())
 
     if st.button("Registrar horas"):
-        db.child("registros").push({
+        data = {
             "usuario": correo,
             "proyecto": proyecto,
             "categoria": categoria,
             "horas": horas,
             "fecha": fecha.strftime('%Y-%m-%d')
-        })
-        st.success("Registro guardado correctamente.")
+        }
+        try:
+            db.child("registros").push(data, st.session_state.user['idToken'])
+            st.success("Registro guardado correctamente.")
+        except Exception:
+            st.error("Error al guardar el registro. Revisa tu conexión o autenticación.")
 
-    # Zona para administrador
+    # Sección exclusiva del administrador
     if correo == "admin@empresa.cl":
         st.markdown("### 🔧 Agregar nuevo proyecto")
         nuevo = st.text_input("Nuevo nombre de proyecto")
         if st.button("Agregar proyecto"):
             if nuevo:
-                db.child("proyectos").push(nuevo)
-                st.success(f"Proyecto '{nuevo}' agregado.")
-                st.experimental_rerun()
+                try:
+                    db.child("proyectos").push(nuevo, st.session_state.user['idToken'])
+                    st.success(f"Proyecto '{nuevo}' agregado.")
+                    st.experimental_rerun()
+                except Exception:
+                    st.error("No se pudo agregar el proyecto.")
 
-    # Cerrar sesión
+    # Botón cerrar sesión
     st.markdown("---")
     if st.button("Cerrar sesión"):
         st.session_state.user = None
         st.success("Sesión cerrada.")
         st.experimental_rerun()
-
-# Control de flujo
-if st.session_state.user is None:
-    login()
-else:
-    formulario()
 
