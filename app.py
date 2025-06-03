@@ -23,7 +23,6 @@ if "login_successful" not in st.session_state:
 # --- Función de login ---
 def login():
     st.title("Iniciar Sesión")
-
     email = st.text_input("Correo")
     password = st.text_input("Contraseña", type="password")
 
@@ -37,6 +36,7 @@ def login():
         except Exception as e:
             st.error("Error en el correo o contraseña.")
 
+# --- Función de registro ---
 def registro():
     st.title("Registro de Horas")
 
@@ -44,13 +44,14 @@ def registro():
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-
     # --- Formulario de registro de horas ---
     proyectos = ["Proyecto A", "Proyecto B", "Proyecto C"]
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
-    categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "etc"])
+    categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "Ing QP"])
     horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
-    fecha = st.date_input("Fecha", value=date.today())
+
+    # ✅ Calendario desplegable ya habilitado aquí
+    fecha = st.date_input("Selecciona la fecha", value=date.today())
 
     if st.button("Registrar"):
         data = {
@@ -63,36 +64,13 @@ def registro():
         try:
             db.child("registros").push(data)
             st.success("Registro guardado correctamente.")
-        except:
-            st.error("Error al guardar el registro en Firebase.")
-
-
-    # --- Formulario de registro ---
-    proyecto = st.selectbox("Selecciona el proyecto", proyectos)
-    categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "Ing QP"])
-    horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
-    fecha = st.date_input("Fecha", value=date.today())
-
-    if st.button("Registrar", key="boton_registro"):
-        try:
-            data = {
-                "usuario": correo,
-                "proyecto": proyecto,
-                "categoria": categoria,
-                "horas": horas,
-                "fecha": fecha.strftime('%Y-%m-%d')
-            }
-            db.child("registros").push(data)
-            st.success("Registro guardado correctamente.")
             st.rerun()
         except Exception as e:
-            st.error("Error al registrar los datos.")
-
+            st.error("Error al guardar el registro en Firebase.")
 
 # --- Control de navegación ---
 if st.session_state.user is None:
     login()
 else:
     registro()
-
 
