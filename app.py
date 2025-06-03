@@ -36,10 +36,10 @@ def login():
             st.experimental_rerun()
         except Exception as e:
             st.error("Error en el correo o contraseña.")
-            # st.warning(str(e))  # opcional para depuración
+            st.warning(str(e))  # Opcional para ver el mensaje real de Firebase
 
     if st.session_state.login_successful:
-        st.stop()  # Evita doble ejecución tras login
+        st.stop()  # Detiene ejecución tras login exitoso
 
 # --- Página principal ---
 def registro():
@@ -49,40 +49,55 @@ def registro():
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-    # --- Obtener proyectos desde Firebase ---
-    proyectos_raw = db.child("proyectos").get().val()
-    proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    # --- Obtener proyectos desde Firebase con control de errores ---
+    try:
+        proyectos_raw = db.child("proyectos").get().val()
+        proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    except Exception as e:
+        st.error("Error al cargar los proyectos desde Firebase.")
+        st.warning(str(e))
+        proyectos = []
 
     if not proyectos:
         st.warning("No hay proyectos disponibles. Contacta al administrador.")
         return
 
+    # --- Formulario de registro ---
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
     categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "Ing QP"])
     horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
     fecha = st.date_input("Fecha", value=date.today())
 
-    if st.button("Registrar"):
-        data = {
-            "usuario": correo,
-            "proyecto": proyecto,
-            "categoria": categoria,
-            "horas": horas,
-            "fecha": fecha.strftime('%Y-%m-%d')
-        }
-        db.child("registros").push(data)
-        st.success("Registro guardado correctamente.")
+    if st.button("Registrar", key="boton_registro"):
+        try:
+            data = {
+                "usuario": correo,
+                "proyecto": proyecto,
+                "categoria": categoria,
+                "horas": horas,
+                "fecha": fecha.strftime('%Y-%m-%d')
+            }
+            db.child("registros").push(data)
+            st.success("Registro guardado correctamente.")
+            st.experimental_rerun()
+        except Exception as e:
+            st.error("Error al registrar los datos.")
+            st.warning(str(e))
 
-    # --- Zona del administrador ---
+    # --- Área del administrador ---
     if correo == "admin@empresa.cl":
         st.write("---")
         st.markdown("### 🔧 Agregar nuevo proyecto")
         nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
         if st.button("Agregar proyecto"):
             if nuevo_proyecto:
-                db.child("proyectos").push(nuevo_proyecto)
-                st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
-                st.experimental_rerun()
+                try:
+                    db.child("proyectos").push(nuevo_proyecto)
+                    st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
+                    st.experimental_rerun()
+                except Exception as e:
+                    st.error("Error al agregar proyecto.")
+                    st.warning(str(e))
 
 # --- Control de navegación ---
 if st.session_state.user is None:
