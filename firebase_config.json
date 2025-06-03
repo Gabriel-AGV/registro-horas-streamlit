@@ -5,5 +5,5 @@
   "storageBucket": "controlhoras2025.firebasestorage.app",
   "messagingSenderId": "14917478246",
   "appId": "1:14917478246:web:119f7b07e0c63e13928aa7",
-  "databaseURL": "https://controlhoras2025.firebaseio.com"
+  "databaseURL": "https://controlhoras2025-default-rtdb.firebaseio.com/"
 }
