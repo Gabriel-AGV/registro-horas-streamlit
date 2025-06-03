@@ -13,7 +13,7 @@ db = firebase.database()
 
 st.set_page_config(page_title="Registro de Horas", layout="centered")
 
-# Estado de sesión
+# Inicializar estado si no existe
 if "user" not in st.session_state:
     st.session_state.user = None
 
@@ -26,22 +26,30 @@ def login():
     if st.button("Iniciar sesión"):
         try:
             user = auth.sign_in_with_email_and_password(email, password)
-            st.session_state.user = user
-            st.success("Sesión iniciada correctamente.")
-            st.experimental_rerun()
-            return  # Evita que el bloque siga corriendo
-        except:
+            # Validar campos esperados
+            if "email" in user:
+                st.session_state.user = user
+                st.success("Sesión iniciada correctamente.")
+                st.experimental_rerun()
+                return
+            else:
+                raise ValueError("Respuesta inesperada al iniciar sesión.")
+        except Exception as e:
             st.error("Error en el correo o contraseña.")
 
 # Función principal
 def registro():
-    st.title("Registro de Horas")
+    if not st.session_state.user or "email" not in st.session_state.user:
+        st.warning("Por favor inicia sesión.")
+        st.session_state.user = None
+        st.experimental_rerun()
+        return
 
+    st.title("Registro de Horas")
     correo = st.session_state.user["email"]
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-    # Obtener proyectos desde Firebase
     try:
         proyectos_raw = db.child("proyectos").get().val()
         proyectos = list(proyectos_raw.values()) if proyectos_raw else []
@@ -70,9 +78,8 @@ def registro():
             db.child("registros").push(data)
             st.success("Registro guardado correctamente.")
         except:
-            st.error("No se pudo guardar el registro. Verifica la conexión o permisos.")
+            st.error("No se pudo guardar el registro. Revisa conexión o permisos.")
 
-    # Sección de administración
     if correo == "admin@empresa.cl":
         st.markdown("### 🔧 Agregar nuevo proyecto")
         nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
@@ -85,7 +92,6 @@ def registro():
                 except:
                     st.error("Error al agregar el proyecto.")
 
-    # Cerrar sesión
     st.markdown("---")
     if st.button("Cerrar sesión"):
         st.session_state.user = None
