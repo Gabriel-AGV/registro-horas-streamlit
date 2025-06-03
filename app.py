@@ -46,7 +46,7 @@ def registro():
 
 
     # --- Formulario de registro de horas ---
-    proyectos = ["Proyecto A", "Proyecto B", "etc"]
+    proyectos = ["Proyecto A", "Proyecto B", "Proyecto C"]
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
     categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "etc"])
     horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
