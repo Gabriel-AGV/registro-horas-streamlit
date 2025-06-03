@@ -1,13 +1,9 @@
 {
-  "type": "service_account",
-  "project_id": "controlhoras2025",
-  "private_key_id": "f94d2cccb97a3e7722e1b0904e59a3a62b593e6e",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDF24x18W60BA9G\n0RKYxAd9Vd9ulbaAPQ/XBXbMEvVohjqrjoxQ/eztLNrB4YEoLaUrRNmZtgvbJnhA\nuWjQC9nx5g1aLuLMTyh73GzgDoY62wOozq7W6WEIuhBTl7aFDpQf+38irtrsqeg2\n54BCdIdlYu0YhQm8/I02SLBVR3SH3ohxVr7jg3QIpfoJRrwQvthenCMUdg5yrZ/5\nMDYZH00ezwHRJbX3Oe1oFYvV+76TmUuRnmVVKHwuSMmt61tNleRnpuicg7hwYWNE\nQfof+xeiUVUV+xrtIYOl6TOAmPp3k31sKnUatqBPC/895HybJhIxeF1knHgk0Axp\nAcVfPflDAgMBAAECggEAEgXm8cLIMfIMDt2Ho055XNjq1/DKUDx/tLdaNB+7/Bqn\naIOSfjmLO1WdKGZpdKanx4e83KF2dgQ3QF9t+pmXGk+5l/qdDT20CIhdNecMzNAG\nMXqA9wcI9Zm2rVlXYR/MAsJ5jnK9ctZ4ATGtqiAMSgIsv9GKlWJaCKpZaa3vIbB3\nfAJuTdzgmQB+2hLfenbAFn3fg9bx3myJBbrvNMgwBKuKCpIjqxG/GYkrvwRE1rv2\ngXwjSXnL7BJbQ55QClP+40xtfnxkbTWtqESXVPaScTRauwh5FS63BCHo1tUxWe9f\n61azqLi9Uy5XbH2Ho/RAlqxf3P5EjvCSTISL+x+WTQKBgQDskVp6hp3H0SVPGY+i\niRiDsIo937bQnCJHCeXmQIdFfZwshM8Se9lOHar83NfSPgLQPukt48H7Zs/cYmWy\nv2/iAWEyp2WdnqcmAzVYMXg8cqWOsH2k4vP4MfHN7o/pbxgnCET8nWwMJ9jOfOMB\nRET9e31WSzkaZNQ6yM+cxrqyBwKBgQDWHC50VeZKAAmcgrwOuwUggNhXA3vzSSTn\nafpyR0U5vmRLxSFKOlQktO5sdZAFcuuvhv8kHqB7970cEPwJBvXoW3sk0ap9oxap\n1ZU3JwqPqnOfmZcoKoFp9+7AA1fiJnJhncDvYGvulo0J4ZdV3jwL8dMJ15gPJR2t\nr8TQ5Os/5QKBgQDJe06tNkPhcD6vbNzJmKwZVN2YrxXb/G6xRDva7DCJvd6qh/55\nBqRghKIhtNHXzVrGFB6zJ90KClmUoPVu1N8shPJMmwfPw9UmaesgDxoRma9ppOWN\n7oHNbHQ+aSWGskjGzaM757OjcriTvQf2BzgfD/MC8RRUZ3XeDzPLmfJeNwKBgQCc\nJz+GHyPucmqQGBT5lVJe6zlc9LCQtZbRo8xBTlNhksbpL+NglHvLrZ15wqAAKVlU\n0dsAx8l5wCvO7WAzYT01coq0RqnWKXyc7qV97N5Z+xGKo+THKYDq/STGK2oMCMhB\nA2Gz85mkD27bdwj9WjBm8b5dnjxLR2GGy/t58orUNQKBgCykAvayTjBI5T+iIAEB\ntS3/rd7iM38639B6VTTc6PWNSLEmt6+douPduL38K6MufZp/wQTz0P6Er0+ou/TT\nqq5n3fEYrmDJ6Iu7PJhJb5k7DdA44w60gLzQEr/5u7lFwozEumb8dN68nxNvmpFI\ncHa5V0DKi730SaFuYsNo02fE\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-fbsvc@controlhoras2025.iam.gserviceaccount.com",
-  "client_id": "105702387183030652091",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40controlhoras2025.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+  "apiKey": "AIzaSyAw9HUd9qxK96F1-Ip9ZI0CqZyQu_WAV-M",
+  "authDomain": "controlhoras2025.firebaseapp.com",
+  "projectId": "controlhoras2025",
+  "storageBucket": "controlhoras2025.firebasestorage.app",
+  "messagingSenderId": "14917478246",
+  "appId": "1:14917478246:web:119f7b07e0c63e13928aa7",
+  "databaseURL": "https://controlhoras2025.firebaseio.com"
 }
