@@ -34,6 +34,23 @@ def login():
             st.session_state.login_successful = True
             st.success("Sesión iniciada correctamente.")
             st.rerun()
+        except Exception as e:
+            st.error("Error en el correo o contraseña.")
+
+# --- Función de login ---
+def login():
+    st.title("Iniciar Sesión")
+
+    email = st.text_input("Correo")
+    password = st.text_input("Contraseña", type="password")
+
+    if st.button("Iniciar sesión"):
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            st.session_state.user = user
+            st.session_state.login_successful = True
+            st.success("Sesión iniciada correctamente.")
+            st.rerun()
         except:
             st.error("Error en el correo o contraseña.")
 
