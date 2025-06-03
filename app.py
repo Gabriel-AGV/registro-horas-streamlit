@@ -2,7 +2,6 @@ import streamlit as st
 from datetime import date
 import pyrebase
 import json
-import os
 
 # Cargar configuración de Firebase
 with open("firebase_config.json") as f:
@@ -23,16 +22,18 @@ def login():
     st.title("Iniciar Sesión")
     email = st.text_input("Correo")
     password = st.text_input("Contraseña", type="password")
+
     if st.button("Iniciar sesión"):
         try:
             user = auth.sign_in_with_email_and_password(email, password)
             st.session_state.user = user
             st.success("Sesión iniciada correctamente.")
             st.experimental_rerun()
+            return  # Evita que el bloque siga corriendo
         except:
             st.error("Error en el correo o contraseña.")
 
-# Página principal
+# Función principal
 def registro():
     st.title("Registro de Horas")
 
@@ -41,8 +42,12 @@ def registro():
     st.write("---")
 
     # Obtener proyectos desde Firebase
-    proyectos_raw = db.child("proyectos").get().val()
-    proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    try:
+        proyectos_raw = db.child("proyectos").get().val()
+        proyectos = list(proyectos_raw.values()) if proyectos_raw else []
+    except:
+        st.error("Error al cargar los proyectos.")
+        proyectos = []
 
     if not proyectos:
         st.warning("No hay proyectos disponibles. Contacta al administrador.")
@@ -61,21 +66,36 @@ def registro():
             "horas": horas,
             "fecha": fecha.strftime('%Y-%m-%d')
         }
-        db.child("registros").push(data)
-        st.success("Registro guardado correctamente.")
+        try:
+            db.child("registros").push(data)
+            st.success("Registro guardado correctamente.")
+        except:
+            st.error("No se pudo guardar el registro. Verifica la conexión o permisos.")
 
+    # Sección de administración
     if correo == "admin@empresa.cl":
         st.markdown("### 🔧 Agregar nuevo proyecto")
         nuevo_proyecto = st.text_input("Nombre del nuevo proyecto")
         if st.button("Agregar proyecto"):
             if nuevo_proyecto:
-                db.child("proyectos").push(nuevo_proyecto)
-                st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
-                st.experimental_rerun()
+                try:
+                    db.child("proyectos").push(nuevo_proyecto)
+                    st.success(f"Proyecto '{nuevo_proyecto}' agregado.")
+                    st.experimental_rerun()
+                except:
+                    st.error("Error al agregar el proyecto.")
 
-# Lógica de navegación
+    # Cerrar sesión
+    st.markdown("---")
+    if st.button("Cerrar sesión"):
+        st.session_state.user = None
+        st.success("Sesión cerrada.")
+        st.experimental_rerun()
+
+# Lógica principal
 if st.session_state.user is None:
     login()
 else:
     registro()
+
 
