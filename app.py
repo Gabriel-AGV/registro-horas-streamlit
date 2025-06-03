@@ -33,11 +33,11 @@ def login():
             st.session_state.user = user
             st.session_state.login_successful = True
             st.success("Sesión iniciada correctamente.")
-            st.experimental_rerun()
-        except Exception as e:
+            st.rerun()
+        except:
             st.error("Error en el correo o contraseña.")
 
-# --- Función principal de registro ---
+# --- Página principal de registro ---
 def registro():
     st.title("Registro de Horas")
 
@@ -45,26 +45,14 @@ def registro():
     st.markdown(f"**Usuario conectado:** {correo}")
     st.write("---")
 
-    # --- Obtener proyectos ---
-    try:
-        proyectos_raw = db.child("proyectos").get().val()
-        if isinstance(proyectos_raw, list):
-            proyectos = [p for p in proyectos_raw if p]
-        elif isinstance(proyectos_raw, dict):
-            proyectos = list(proyectos_raw.values())
-        else:
-            proyectos = []
-    except:
-        proyectos = []
-
-    if not proyectos:
-        st.warning("No hay proyectos disponibles. Contacta al administrador.")
-        return
-
+    # --- Formulario de registro ---
+    proyectos = ["Proyecto A", "Proyecto B", "Proyecto C"]
     proyecto = st.selectbox("Selecciona el proyecto", proyectos)
     categoria = st.selectbox("Selecciona tu categoría", ["Ing A", "Ing B", "Ing QP"])
     horas = st.number_input("Horas trabajadas", min_value=0.0, step=0.5)
-    fecha = st.date_input("Fecha", value=date.today())
+
+    # ⬇️ El calendario se despliega al hacer clic (limite de Streamlit)
+    fecha = st.date_input("Selecciona la fecha de trabajo", value=date.today())
 
     if st.button("Registrar"):
         data = {
@@ -77,7 +65,7 @@ def registro():
         try:
             db.child("registros").push(data)
             st.success("Registro guardado correctamente.")
-            st.experimental_rerun()
+            st.rerun()
         except:
             st.error("Error al guardar el registro en Firebase.")
 
@@ -86,4 +74,3 @@ if st.session_state.user is None:
     login()
 else:
     registro()
-
