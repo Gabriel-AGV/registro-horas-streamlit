@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import date
-import pyrebase
+import pyrebase4
 import json
 import os
 
@@ -8,7 +8,7 @@ import os
 with open("firebase_config.json") as f:
     firebase_config = json.load(f)
 
-firebase = pyrebase.initialize_app(firebase_config)
+firebase = pyrebase4.initialize_app(firebase_config)
 auth = firebase.auth()
 db = firebase.database()
 
